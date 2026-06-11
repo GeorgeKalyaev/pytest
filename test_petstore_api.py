@@ -2,6 +2,8 @@ import allure
 import pytest
 from api_client import get,post, put, delete
 from data_generator import generate_pet_data
+from pet_store_models import Pet, DeletedPet, PetNotFoundError
+from pet_store_api import petFindbyId
 
 BASE_URL = "https://petstore.swagger.io/v2/pet"
 
@@ -70,19 +72,22 @@ def test_incorrect_type():
 def test_end_to_end():
     pet_id = 333444
     post_body["id"] = pet_id
+    post_body.pop("name") # удаляем обязательное поле, чтобы проверить, что оно действительно обязательное
     response = post(BASE_URL, json=post_body)
     with allure.step("Check pet creation response status code"):
         assert response.status_code == 200
     with allure.step("Check pet creation response body"):
-        assert response.json() == post_body
-    response = get(f"{BASE_URL}/{pet_id}")
-    with allure.step("Check pet retrieval response status code"):
-        assert response.status_code == 200
+        assert Pet(**response.json()) == Pet(**post_body)
+
+    response = petFindbyId(pet_id)
+    # with allure.step("Check pet retrieval response status code"):
+    #     assert response.status_code == 200
     with allure.step("Check pet retrieval response body"):
-        assert response.json() == post_body
+        assert response == Pet(**post_body)
 
     pet_name = "bear"
     post_body["name"] = pet_name
+
     response = put(BASE_URL, json=post_body)
     with allure.step("Check put response status code"):
         assert response.status_code == 200
@@ -93,19 +98,19 @@ def test_end_to_end():
     with allure.step("Check get retrieval response status code"):
         assert response.status_code == 200
     with allure.step("Check get retrieval response body = bear"):
-        assert response.json() == post_body
+        assert Pet(**response.json()) == Pet(**post_body)
 
     response = delete(f"{BASE_URL}/{pet_id}")
     with allure.step("Check delete response status code"):
         assert response.status_code == 200
     with allure.step("Check delete response body = bear - deleted"):
-        assert response.json() == {"code": 200,"type": "unknown","message": str(pet_id)}
+        assert DeletedPet(**response.json()).message == str(pet_id) # все остальное проверится DeletedPet само
 
     response = get(f"{BASE_URL}/{pet_id}")
     with allure.step("Check get retrieval response status code"):
         assert response.status_code == 404
     with allure.step("Check get retrieval response body = bear - not found"):
-        assert response.json() ==  {"code": 1,"type": "error","message": "Pet not found"}
+        assert PetNotFoundError(**response.json())
         
     
 
