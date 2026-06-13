@@ -28,6 +28,8 @@ python -m pytest test_petstore_api.py --alluredir=allure-results
 ## Structure
 
 ```
+conftest.py              ← session fixture (autouse — setup/teardown for all tests)
+
 test_petstore_api.py     ← scenarios, asserts
         ↓
 pet_store_api.py         ← petCreate, petFindbyId, petUpdate, petDelete
@@ -38,8 +40,6 @@ pet_store_models.py      ← Pet, DeletedPet, PetNotFoundError (Pydantic)
         ↓
 data_generator.py        ← test data (Faker)
 ```
-
-`conftest.py` — pytest session fixture (setup/teardown before tests run).
 
 E2E goes through the full stack: create → get → update → get → delete → get (404). Some older tests still hit `api_client` directly.
 
