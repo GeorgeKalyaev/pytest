@@ -3,7 +3,7 @@ import pytest
 from api_client import get,post, put, delete
 from data_generator import generate_pet_data
 from pet_store_models import Pet, DeletedPet, PetNotFoundError
-from pet_store_api import petFindbyId, petUpdate, petDelete
+from pet_store_api import petFindbyId, petUpdate, petDelete, petCreate
 
 BASE_URL = "https://petstore.swagger.io/v2/pet"
 
@@ -75,11 +75,15 @@ def test_end_to_end():
     post_body.pop("name") # удаляем обязательное поле, чтобы проверить, что оно действительно обязательное
 
 
-    response = post(BASE_URL, json=post_body)
-    with allure.step("Check pet creation response status code"):
-        assert response.status_code == 200
+    # response = post(BASE_URL, json=post_body)
+    # with allure.step("Check pet creation response status code"):
+    #     assert response.status_code == 200
+    # with allure.step("Check pet creation response body"):
+    #     assert Pet(**response.json()) == Pet(**post_body)
+
+    response = petCreate(post_body)
     with allure.step("Check pet creation response body"):
-        assert Pet(**response.json()) == Pet(**post_body)
+        assert response == Pet(**post_body)
 
     response = petFindbyId(pet_id)
 
