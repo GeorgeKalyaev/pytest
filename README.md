@@ -27,6 +27,20 @@ python -m pytest test_petstore_api.py --alluredir=allure-results
 
 ## Structure
 
+Layers (top to bottom):
+
+```
+test_petstore_api.py     ← scenarios, asserts
+        ↓
+pet_store_api.py         ← petCreate, petFindbyId, petUpdate, petDelete
+        ↓
+api_client.py            ← GET / POST / PUT / DELETE (requests)
+        ↓
+pet_store_models.py      ← Pet, DeletedPet, PetNotFoundError (Pydantic)
+        ↓
+data_generator.py        ← test data (Faker)
+```
+
 | File | What it does |
 |------|----------------|
 | `api_client.py` | HTTP layer — get/post/put/delete via requests |
