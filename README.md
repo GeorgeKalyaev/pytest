@@ -27,8 +27,6 @@ python -m pytest test_petstore_api.py --alluredir=allure-results
 
 ## Structure
 
-Layers (top to bottom):
-
 ```
 test_petstore_api.py     ← scenarios, asserts
         ↓
@@ -41,18 +39,9 @@ pet_store_models.py      ← Pet, DeletedPet, PetNotFoundError (Pydantic)
 data_generator.py        ← test data (Faker)
 ```
 
-| File | What it does |
-|------|----------------|
-| `api_client.py` | HTTP layer — get/post/put/delete via requests |
-| `pet_store_api.py` | Pet endpoints — `petCreate`, `petFindbyId`, `petUpdate`, `petDelete` |
-| `pet_store_models.py` | Pydantic models — `Pet`, `DeletedPet`, `PetNotFoundError` |
-| `data_generator.py` | Test data, Faker |
-| `conftest.py` | Session fixture (setup/teardown hooks) |
-| `test_petstore_api.py` | Tests — parametrize, negative case, E2E |
+`conftest.py` — pytest session fixture (setup/teardown before tests run).
 
-Flow in tests: call `pet_store_api` → get a model back → assert. Older tests still call `api_client` directly; E2E uses the full stack.
-
-E2E scenario: create → get → update → get → delete → get (404).
+E2E goes through the full stack: create → get → update → get → delete → get (404). Some older tests still hit `api_client` directly.
 
 ## Notes
 
