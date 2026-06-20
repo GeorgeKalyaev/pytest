@@ -14,7 +14,7 @@ python -m venv .venv
 .venv\Scripts\activate        # Windows
 # source .venv/bin/activate   # Linux/macOS
 
-pip install pytest requests pydantic faker allure-pytest
+pip install pytest requests pydantic faker allure-pytest responses
 
 python -m pytest test_petstore_api.py -v
 ```
@@ -41,7 +41,7 @@ pet_store_models.py      ← Pet, DeletedPet, PetNotFoundError (Pydantic)
 data_generator.py        ← test data (Faker)
 ```
 
-E2E goes through the full stack: create → get → update → get → delete → get (404). Some older tests still hit `api_client` directly.
+E2E goes through the full stack: create → get → update → get → delete → get (404). Some older tests still hit `api_client` directly. Mock test for `petFindbyId` uses `responses` — no real HTTP call.
 
 ## Notes
 
@@ -50,4 +50,4 @@ E2E goes through the full stack: create → get → update → get → delete �
 
 ## Stack
 
-pytest · requests · pydantic · faker · allure-pytest
+pytest · requests · pydantic · faker · allure-pytest · responses

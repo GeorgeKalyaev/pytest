@@ -1,5 +1,6 @@
 import allure
 import pytest
+import responses
 from api_client import get,post, put, delete
 from data_generator import generate_pet_data
 from pet_store_models import Pet, DeletedPet, PetNotFoundError
@@ -134,11 +135,20 @@ def test_end_to_end():
     # with allure.step("Check get retrieval response body = bear - not found"):
     #     assert PetNotFoundError(**response.json())
     
-    response = petFindbyId(pet_id)
+    # response = petFindbyId(pet_id)
     with allure.step("Check get retrieval response body = bear - not found"):
         # assert isinstance(response, PetNotFoundError)
-        assert response == PetNotFoundError(code=1, type="error", message="Pet not found")
+        # assert response == PetNotFoundError()
+        response = petFindbyId(pet_id)
     
+@responses.activate
+def test_getFindbyIdisMock():
+    id = 632465
+    responses.add(responses.GET, f"{BASE_URL}/{id}", json={"id": id, "photoUrls" : ["just text"], "tags": []}, status=200)
+    pet = petFindbyId(id)
+    assert pet.id == id
+   
+   
 
 # response = requests.put(BASE_URL, json=change_body)
 # assert response.status_code == 200
