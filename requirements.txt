@@ -1,0 +1,6 @@
+allure-pytest
+pytest
+responses
+pydantic
+faker
+requests
